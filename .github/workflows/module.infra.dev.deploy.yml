@@ -59,6 +59,9 @@ jobs:
     name: 'Automated PR Check'
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3.3.0
