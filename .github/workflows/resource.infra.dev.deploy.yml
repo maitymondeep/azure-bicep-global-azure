@@ -80,6 +80,7 @@ jobs:
         inlineScript: |
           cd ${{ github.workspace }}/infrastructure/resource-based
           az deployment group what-if \
+            --resource-group ${{ env.RG_NAME }} \
             --name whatif-${{ github.run_id }} \
             --template-file ./resources/main.bicep \
             --parameters ./environments/dev.parameters.json > whatif
