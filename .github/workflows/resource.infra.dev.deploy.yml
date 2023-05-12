@@ -25,6 +25,7 @@ jobs:
   validate:
     name: 'Lint and Validate'
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' 
     permissions:
       id-token: write
       contents: read
@@ -59,6 +60,7 @@ jobs:
 
   pr-check:
     name: 'Automated PR Check'
+    if: github.event_name == 'pull_request' 
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
@@ -120,6 +122,7 @@ jobs:
 
   what-if:
     name: 'What-If'
+    if: github.event_name != 'pull_request' 
     needs: [validate]
     runs-on: ubuntu-latest
     environment: pull_request
@@ -188,7 +191,9 @@ jobs:
 
   deploy:
     name: 'Deploy Infra'
-    if: github.ref == 'refs/heads/main' 
+    if: |
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main' 
     runs-on: ubuntu-latest
     environment: dev
     needs: [what-if]
