@@ -43,6 +43,7 @@ jobs:
         inlineScript: |
           cd ${{ github.workspace }}/infrastructure/module-based/modules
           az bicep build --file main.bicep
+          az bicep format --file main.bicep
 
     - name: Bicep Validate
       uses: Azure/cli@v1
