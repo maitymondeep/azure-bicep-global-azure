@@ -112,7 +112,7 @@ jobs:
       env:
         SUMMARY_OUTPUT: "${{ steps.whatif-output.outputs.summary }}"
       with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             const body = `${process.env.SUMMARY_OUTPUT}`;
             github.rest.issues.createComment({
