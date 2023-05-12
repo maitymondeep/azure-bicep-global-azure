@@ -58,6 +58,7 @@ jobs:
     name: 'What-If'
     needs: [validate]
     runs-on: ubuntu-latest
+    environment: pull_request
     permissions:
       id-token: write
       contents: read
