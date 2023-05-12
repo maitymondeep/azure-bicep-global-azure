@@ -1,8 +1,14 @@
+@description('Location of the RG')
 param location string
+@description('Name of the app service name')
 param appServiceName string
+@description('Name of the app Service Plan')
 param appServicePlanName string
+@description('Name of the app Service Plan SKU')
 param appServicePlanSku string
+@description('Name of the App Insights')
 param appInsightsNameWebApp string
+@description('Define the capacity of the app service Plan')
 param appServicePlanCapacity int
 
 // App Service plan
