@@ -11,8 +11,6 @@ jobs:
     name: 'Lint and Validate'
     runs-on: ubuntu-latest
     if: startsWith(github.ref_name, 'main')
-    environment:
-      name: dev
     permissions:
       id-token: write
       contents: read
@@ -43,15 +41,12 @@ jobs:
             --resource-group ${{ env.RG_NAME }} \
             --name validate-${{ github.run_id }} \
             --template-file ./resources/main.bicep \
-            --parameters ./environments/dev.parameters.json \
-            --location 'West Europe' 
+            --parameters ./environments/dev.parameters.json
 
   what-if:
     name: 'What-If'
     needs: [validate]
     runs-on: ubuntu-latest
-    environment:
-      name: dev
     permissions:
       id-token: write
       contents: read
@@ -75,8 +70,7 @@ jobs:
             --resource-group ${{ env.RG_NAME }} \
             --name whatif-${{ github.run_id }} \
             --template-file ./resources/main.bicep \
-            --parameters ./environments/dev.parameters.json \
-            --location 'West Europe' > whatif
+            --parameters ./environments/dev.parameters.json > whatif
 
     - name: PrePare Output
       id: whatif-output
@@ -145,5 +139,4 @@ jobs:
             --resource-group ${{ env.RG_NAME }} \
             --name validate-${{ github.run_id }} \
             --template-file ./resources/main.bicep \
-            --parameters ./environments/dev.parameters.json \
-            --location 'West Europe' 
+            --parameters ./environments/dev.parameters.json

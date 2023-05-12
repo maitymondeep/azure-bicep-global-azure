@@ -8,8 +8,6 @@ jobs:
     name: 'Lint and Validate'
     runs-on: ubuntu-latest
     if: startsWith(github.ref_name, 'main')
-    environment:
-      name: dev
     permissions:
       id-token: write
       contents: read
@@ -46,8 +44,6 @@ jobs:
     name: 'What-If'
     needs: [validate]
     runs-on: ubuntu-latest
-    environment:
-      name: dev
     permissions:
       id-token: write
       contents: read
