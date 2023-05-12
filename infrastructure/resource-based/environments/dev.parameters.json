@@ -9,7 +9,7 @@
         "value": "asp-global-azure-demo-res"
       },
       "appServicePlanSku": {
-        "value": "S1"
+        "value": "F1"
       },
       "appServiceName": {
         "value": "app-global-azure-demo-res"
