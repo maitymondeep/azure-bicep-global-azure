@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "value": "rgazewglobalazuredemo"
+    },
+    "resourceGroupLocation": {
+      "value": "West Europe"
+    },
+    "deployStorageAccount": {
+      "value": true
+    },
+    "storageAccountName": {
+      "value": "saglobalazuredemo001"
+    },
+    "appServicePlanName": {
+      "value": "asp-global-azure-demo-test"
+    },
+    "appServicePlanSku": {
+      "value": "F1"
+    },
+    "appServiceName": {
+      "value": "app-global-azure-demo-test"
+    },
+    "appInsightsNameWebApp": {
+      "value": "appi-app-global-azure-demo-test"
+    },
+    "appServicePlanCapacity": {
+      "value": 1
+    },
+    "KvName": {
+      "value": "kv-global-azure-test"
+    },
+    "deployCosmosDB": {
+      "value": false
+    },
+    "cosmosDBAccountName": {
+      "value": "cosmosdb-global-azure-demo-test"
+    },
+    "cosmosDBAccountCount": {
+      "value": 0
+    },
+    "deploySQLServer": {
+      "value": false
+    },
+    "sqlServerName": {
+      "value": "sql-global-azure-demo-test"
+    },
+    "sqlAdminUserName": {
+      "value": "administrator"
+    },
+    "sqlPasswordSecretName": {
+      "value": "sql-admin-password"
+    },
+    "sqlDatabaseNames": {
+      "value": [
+        "sqldb-global-azure-demo-test-1",
+        "sqldb-global-azure-demo-test-2"
+      ]
+    }
+  }
+}
