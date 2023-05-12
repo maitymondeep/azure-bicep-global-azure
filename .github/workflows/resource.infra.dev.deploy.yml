@@ -3,6 +3,21 @@ name: 'Deploy Infra in Dev [Resource Based]'
 on:
   workflow_dispatch:
 
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - "infrastructure/resource-based/**"
+      - '.github/workflows/resource.infra.dev.deploy.yml'
+
+  push:
+    branches:
+      - 'main'
+      - 'feature/*'
+    paths:
+      - "infrastructure/resource-based/**"
+      - '.github/workflows/resource.infra.dev.deploy.yml'
+
 env:
   RG_NAME: "rgazewglobalazuredemo"
 

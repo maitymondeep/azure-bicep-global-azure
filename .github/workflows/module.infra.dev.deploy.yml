@@ -1,7 +1,22 @@
-name: 'Deploy Infra in Dev [Module]'
+name: 'Deploy Infra in Dev [Module Based]'
 
 on:
   workflow_dispatch:
+
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - "infrastructure/module-based/**"
+      - '.github/workflows/module.infra.dev.deploy.yml'
+
+  push:
+    branches:
+      - 'main'
+      - 'feature/*'
+    paths:
+      - "infrastructure/module-based/**"
+      - '.github/workflows/module.infra.dev.deploy.yml'
 
 jobs:
   validate:
