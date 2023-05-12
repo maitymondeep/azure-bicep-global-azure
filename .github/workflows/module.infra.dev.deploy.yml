@@ -7,7 +7,7 @@ jobs:
   validate:
     name: 'Lint and Validate'
     runs-on: ubuntu-latest
-    if: startsWith(github.ref_name, 'master')
+    if: startsWith(github.ref_name, 'main')
     environment:
       name: dev
     permissions:
