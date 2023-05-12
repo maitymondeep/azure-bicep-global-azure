@@ -3,6 +3,9 @@ name: 'Deploy Infra in Dev [Resource Based]'
 on:
   workflow_dispatch:
 
+env:
+  RG_NAME: "rgazewglobalazuredemo"
+
 jobs:
   validate:
     name: 'Lint and Validate'
@@ -36,7 +39,8 @@ jobs:
       with:
         inlineScript: |
           cd ${{ github.workspace }}/infrastructure/resource-based
-          az deployment sub validate \
+          az deployment group validate \
+            --resource-group ${{ env.RG_NAME }} \
             --name validate-${{ github.run_id }} \
             --template-file ./modules/main.bicep \
             --parameters ./environments/dev.parameters.json \
@@ -67,7 +71,8 @@ jobs:
       with:
         inlineScript: |
           cd ${{ github.workspace }}/infrastructure/resource-based
-          az deployment sub what-if \
+          az deployment group what-if \
+            --resource-group ${{ env.RG_NAME }} \
             --name whatif-${{ github.run_id }} \
             --template-file ./modules/main.bicep \
             --parameters ./environments/dev.parameters.json \
@@ -136,7 +141,8 @@ jobs:
       with:
         inlineScript: |
           cd ${{ github.workspace }}/infrastructure/resource-based
-          az deployment sub create \
+          az deployment group create \
+            --resource-group ${{ env.RG_NAME }} \
             --name validate-${{ github.run_id }} \
             --template-file ./modules/main.bicep \
             --parameters ./environments/dev.parameters.json \
