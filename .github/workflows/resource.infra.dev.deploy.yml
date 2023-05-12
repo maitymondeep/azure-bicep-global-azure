@@ -74,11 +74,10 @@ jobs:
       with:
         inlineScript: |
           cd ${{ github.workspace }}/infrastructure/resource-based
-          az deployment sub what-if \
+          az deployment group what-if \
             --name whatif-${{ github.run_id }} \
             --template-file ./resources/main.bicep \
-            --parameters ./environments/dev.parameters.json \
-            --location 'West Europe' > whatif
+            --parameters ./environments/dev.parameters.json > whatif
 
     - name: PrePare Output
       id: whatif-output
