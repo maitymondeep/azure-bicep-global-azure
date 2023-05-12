@@ -1,0 +1,51 @@
+name: 'Build and Deploy Microservice for IOM Projects'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: 'Helm Specific Deployment'
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'master')
+    environment:
+      name: ${{ inputs.env_name }}
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3.3.0
+
+    - name: Az CLI Login via OIDC
+      uses: azure/login@v1
+      with:
+        client-id: "721121da-9956-4f2d-a308-055b22ee07e0"
+        tenant-id: "8a67a398-d847-467d-8784-862a887f1386"
+        subscription-id: "1c190342-9d6f-48cb-b208-86ca9725c9a6"
+
+    # - name: Azure Login by Respective SPN
+    #   if: ${{ inputs.login_type == 'spn_login' }}
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: '{"clientId":"${{ inputs.azure_client_id }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ inputs.azure_subscription_id }}","tenantId":"05d75c05-fa1a-42e7-9cf1-eb416c396f2d"}'
+
+#     - name: Set ACR Server and HCV Path
+#       shell: bash
+#       run: |
+#         if [[ ${{ inputs.product }} == 'telikos' ]]; then
+#           echo "hcv_secret_engine=ohptelikos-kv" >> $GITHUB_ENV
+#         elif [[ ${{ inputs.product }} == 'ohm' ]]; then
+#           echo "hcv_secret_engine=ohmodernizationn-kv" >> $GITHUB_ENV
+#         elif [[ ${{ inputs.product }} == 'ohm-dnd' ]]; then
+#           echo "hcv_secret_engine=ohmodernizationn-kv" >> $GITHUB_ENV
+#         elif [[ ${{ inputs.product }} == 'imports-ssdo' ]]; then
+#           echo "hcv_secret_engine=ohpimportsssdo-kv" >> $GITHUB_ENV
+#         elif [[ ${{ inputs.product }} == 'imports-iip' ]]; then
+#           echo "hcv_secret_engine=iip-kv" >> $GITHUB_ENV
+#         elif [[ ${{ inputs.product }} == 'csalns' ]]; then
+#           echo "hcv_secret_engine=csatomlns-kv" >> $GITHUB_ENV
+#         elif [[ ${{ inputs.product }} == 'csatom' ]]; then
+#           echo "hcv_secret_engine=csatom-kv" >> $GITHUB_ENV
+#         elif [[ ${{ inputs.product }} == 'iom' ]]; then
+#           echo "hcv_secret_engine=iom-kv" >> $GITHUB_ENV
+#         fi
+
+# UeU8Q~-YCu_MB5CEylkS4s3v-e2o0RtjcdrIRbcl
