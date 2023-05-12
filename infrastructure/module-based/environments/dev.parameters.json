@@ -18,7 +18,7 @@
       "value": "asp-global-azure-demo-test"
     },
     "appServicePlanSku": {
-      "value": "S1"
+      "value": "F1"
     },
     "appServiceName": {
       "value": "app-global-azure-demo-test"
