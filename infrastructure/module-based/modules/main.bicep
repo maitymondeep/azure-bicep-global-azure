@@ -1,5 +1,8 @@
 targetScope = 'subscription'
+
+@description('Name of the resource group')
 param resourceGroupName string
+@description('Resource Group Location')
 param resourceGroupLocation string
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
@@ -7,50 +10,64 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   location: resourceGroupLocation
 }
 
-// StorageAccount Parameters
-param deployStorageAccount bool
-@minLength(5)
-@maxLength(60)
-param storageAccountName string
-
-//  AppService Parameters
-param appServicePlanName string
-@allowed([
-  'S1'
-  'F1'
-])
-param appServicePlanSku string
-
-// WebApp paramters
-param appServiceName string
-@description('Name of appInsights, Please use the naming convention properly')
-param appInsightsNameWebApp string
-@minValue(1)
-@maxValue(3)
-param appServicePlanCapacity int
-
-// CosmosDB Params
-param deployCosmosDB bool
-param cosmosDBAccountName string
-param cosmosDBAccountCount int
-
-// SQL Parameters
-param deploySQLServer bool
-param sqlServerName string
-param sqlAdminUserName string
-param sqlPasswordSecretName string
-param KvName string
-param sqlDatabaseNames array
-
 resource existingKeyVault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
   name: KvName
   scope: resourceGroup
 }
 
+// SQL Parameters
+@description('Do you need to Deploy SQL Server')
+param deploySQLServer bool
+@description('Name of the SQL server')
+param sqlServerName string
+@description('Username of the SQL Server')
+param sqlAdminUserName string
+@description('Password of the SQL Server')
+param sqlPasswordSecretName string
+param KvName string
+@description('Name of the SQL Databases, it should be in array format')
+param sqlDatabaseNames array
+
+// StorageAccount Parameters
+@description('Do you need to Deploy Storage Account')
+param deployStorageAccount bool
+@minLength(3)
+@maxLength(24)
+@description('Name of the storage account')
+param storageAccountName string
+
+//  AppService Parameters
+@description('name of the app service plan')
+param appServicePlanName string
+@allowed([
+  'S1'
+  'F1'
+])
+@description('Define the SKU of the app Service Plan')
+param appServicePlanSku string
+
+// WebApp paramters
+@description('Name of the app service')
+param appServiceName string
+@description('Name of appInsights')
+param appInsightsNameWebApp string
+@minValue(1)
+@maxValue(3)
+@description('Define the app service plan capacity')
+param appServicePlanCapacity int
+
+// CosmosDB Params
+@description('Do you need to deploy cosmos DB')
+param deployCosmosDB bool
+@description('Name of the cosmosDB account name')
+param cosmosDBAccountName string
+@description('Define the number of cosmosDB account that needs to be created')
+param cosmosDBAccountCount int
+
 // SQL Server Module
 module sqlServerModule '01_sqlServer.bicep' = {
   name: 'sqlServerModule'
-  dependsOn: [existingKeyVault]
+  dependsOn: [ existingKeyVault ]
   scope: resourceGroup
   params: {
     deploySQLServer: deploySQLServer
@@ -101,4 +118,3 @@ module cosmosDBModule '05_cosmosdb.bicep' = {
     location: resourceGroup.location
   }
 }
-

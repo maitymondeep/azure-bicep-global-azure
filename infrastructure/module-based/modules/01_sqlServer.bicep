@@ -7,7 +7,7 @@ param sqlDatabaseNames array
 param location string
 
 // SQL Server
-resource sqlServer 'Microsoft.Sql/servers@2021-11-01' = if(deploySQLServer == 'true') {
+resource sqlServer 'Microsoft.Sql/servers@2021-11-01' = if(deploySQLServer) {
   name: sqlServerName
   location: location
   properties: {
@@ -17,7 +17,7 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01' = if(deploySQLServer == 't
 }
 
 //SQL Database
-resource sqlServerDatabase 'Microsoft.Sql/servers/databases@2021-11-01' = [for name in sqlDatabaseNames: if(deploySQLServer == 'true') {
+resource sqlServerDatabase 'Microsoft.Sql/servers/databases@2021-11-01' = [for name in sqlDatabaseNames: if(deploySQLServer) {
   parent: sqlServer
   name: name
   location: location
