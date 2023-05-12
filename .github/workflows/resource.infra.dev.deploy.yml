@@ -65,7 +65,6 @@ jobs:
       uses: actions/checkout@v3.3.0
 
     - name: Azure Login
-      if: ${{ inputs.login_type == 'spn_login' }}
       uses: azure/login@v1
       with:
         creds: '{"clientId":"721121da-9956-4f2d-a308-055b22ee07e0","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"1c190342-9d6f-48cb-b208-86ca9725c9a6","tenantId":"8a67a398-d847-467d-8784-862a887f1386"}'
