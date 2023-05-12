@@ -27,10 +27,3 @@ resource Secret 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
 
 output storageEndpoint string = deployStorageAccount ? storageaccount.properties.primaryEndpoints.blob : ''
 output storageAccountID string = deployStorageAccount ? storageaccount.id : ''
-
-
-
-
-
-
-//az deployment group create --resource-group rgazewpocteltest001 --template-file ./01_storage_account.bicep --mode complete --confirm-with-what-if --output yaml --what-if-result-format
