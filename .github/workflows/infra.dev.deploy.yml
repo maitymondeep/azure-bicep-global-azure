@@ -1,4 +1,4 @@
-name: 'Build and Deploy Microservice for IOM Projects'
+name: 'Deploy Infra in Dev'
 
 on:
   workflow_dispatch:
