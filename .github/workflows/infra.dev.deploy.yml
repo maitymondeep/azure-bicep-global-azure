@@ -62,7 +62,6 @@ jobs:
         tenant-id: "8a67a398-d847-467d-8784-862a887f1386"
         subscription-id: "1c190342-9d6f-48cb-b208-86ca9725c9a6"
 
-    # Preview changes
     - name: "What-If"
       uses: Azure/cli@v1
       with:
@@ -74,7 +73,7 @@ jobs:
             --parameters ./environments/dev.parameters.json \
             --location 'West Europe' > whatif
 
-    - name: Create String Output
+    - name: PrePare Output
       id: whatif-output
       run: |
         cd ${{ github.workspace }}/infrastructure
@@ -90,25 +89,55 @@ jobs:
         echo "</details>" >> $GITHUB_OUTPUT
         echo "${delimiter}" >> $GITHUB_OUTPUT
 
-    - name: Publish Whatif to Task Summary
+    - name: Post to the Step Summary
       env:
-        SUMMARY: ${{ steps.whatif-output.outputs.summary }}
+        SUMMARY_OUTPUT: ${{ steps.whatif-output.outputs.summary }}
       run: |
-        echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
-      
-    # If this is a PR post the changes
-    - name: Push Whatif Output to PR
+        echo "$SUMMARY_OUTPUT" >> $GITHUB_STEP_SUMMARY
+
+    - name: Update PR Comment
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v6
       env:
-        SUMMARY: "${{ steps.whatif-output.outputs.summary }}"
+        SUMMARY_OUTPUT: "${{ steps.whatif-output.outputs.summary }}"
       with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const body = `${process.env.SUMMARY}`;
+            const body = `${process.env.SUMMARY_OUTPUT}`;
             github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: body
             })
+
+  bicep-deploy:
+    name: 'Deploy Infra'
+    if: github.ref == 'refs/heads/main' 
+    runs-on: ubuntu-latest
+    environment: dev
+    needs: [what-if]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Az CLI Login via OIDC
+      uses: azure/login@v1
+      with:
+        client-id: "721121da-9956-4f2d-a308-055b22ee07e0"
+        tenant-id: "8a67a398-d847-467d-8784-862a887f1386"
+        subscription-id: "1c190342-9d6f-48cb-b208-86ca9725c9a6"
+
+    - name: "Infra Deployment"
+      uses: Azure/cli@v1
+      with:
+        inlineScript: |
+          cd ${{ github.workspace }}/infrastructure
+          az deployment sub create \
+            --name validate-${{ github.run_id }} \
+            --template-file ./modules/main.bicep \
+            --parameters ./environments/dev.parameters.json \
+            --location 'West Europe' 
