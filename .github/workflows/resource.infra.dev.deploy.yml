@@ -25,6 +25,7 @@ jobs:
   validate:
     name: 'Lint and Validate'
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' 
     permissions:
       id-token: write
       contents: read
@@ -59,7 +60,11 @@ jobs:
 
   pr-check:
     name: 'Automated PR Check'
+    if: github.event_name == 'pull_request' 
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3.3.0
@@ -75,6 +80,7 @@ jobs:
         inlineScript: |
           cd ${{ github.workspace }}/infrastructure/resource-based
           az deployment group what-if \
+            --resource-group ${{ env.RG_NAME }} \
             --name whatif-${{ github.run_id }} \
             --template-file ./resources/main.bicep \
             --parameters ./environments/dev.parameters.json > whatif
@@ -107,7 +113,7 @@ jobs:
       env:
         SUMMARY_OUTPUT: "${{ steps.whatif-output.outputs.summary }}"
       with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             const body = `${process.env.SUMMARY_OUTPUT}`;
             github.rest.issues.createComment({
@@ -120,6 +126,7 @@ jobs:
 
   what-if:
     name: 'What-If'
+    if: github.event_name != 'pull_request' 
     needs: [validate]
     runs-on: ubuntu-latest
     environment: pull_request
@@ -170,25 +177,11 @@ jobs:
       run: |
         echo "$SUMMARY_OUTPUT" >> $GITHUB_STEP_SUMMARY
 
-    - name: Update PR Comment
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
-      env:
-        SUMMARY_OUTPUT: "${{ steps.whatif-output.outputs.summary }}"
-      with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const body = `${process.env.SUMMARY_OUTPUT}`;
-            github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: body
-            })
-
   deploy:
     name: 'Deploy Infra'
-    if: github.ref == 'refs/heads/main' 
+    if: |
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main' 
     runs-on: ubuntu-latest
     environment: dev
     needs: [what-if]
