@@ -6,16 +6,16 @@
         "value": "West Europe"
       },
       "appServicePlanName": {
-        "value": "asp-global-azure-demo-test-res"
+        "value": "asp-global-azure-demo-res"
       },
       "appServicePlanSku": {
         "value": "S1"
       },
       "appServiceName": {
-        "value": "app-global-azure-demo-test-res"
+        "value": "app-global-azure-demo-res"
       },
       "appInsightsNameWebApp": {
-        "value": "appi-app-global-azure-demo-test-res"
+        "value": "appi-app-global-azure-demo-res"
       },
       "appServicePlanCapacity": {
         "value": 1

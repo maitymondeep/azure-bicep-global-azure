@@ -15,16 +15,16 @@
       "value": "saglobalazuredemo001"
     },
     "appServicePlanName": {
-      "value": "asp-global-azure-demo-test"
+      "value": "asp-global-azure-demo"
     },
     "appServicePlanSku": {
       "value": "S1"
     },
     "appServiceName": {
-      "value": "app-global-azure-demo-test"
+      "value": "app-global-azure-demo"
     },
     "appInsightsNameWebApp": {
-      "value": "appi-app-global-azure-demo-test"
+      "value": "appi-app-global-azure-demo"
     },
     "appServicePlanCapacity": {
       "value": 1
@@ -36,7 +36,7 @@
       "value": false
     },
     "cosmosDBAccountName": {
-      "value": "cosmosdb-global-azure-demo-test"
+      "value": "cosmosdb-global-azure-demo"
     },
     "cosmosDBAccountCount": {
       "value": 0
@@ -45,7 +45,7 @@
       "value": false
     },
     "sqlServerName": {
-      "value": "sql-global-azure-demo-test"
+      "value": "sql-global-azure-demo"
     },
     "sqlAdminUserName": {
       "value": "administrator"
@@ -55,8 +55,8 @@
     },
     "sqlDatabaseNames": {
       "value": [
-        "sqldb-global-azure-demo-test-1",
-        "sqldb-global-azure-demo-test-2"
+        "sqldb-global-azure-demo-1",
+        "sqldb-global-azure-demo-2"
       ]
     }
   }
