@@ -1,0 +1,143 @@
+name: 'Deploy Infra in Dev [Module]'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: 'Lint and Validate'
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'master')
+    environment:
+      name: dev
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3.3.0
+
+    - name: Az CLI Login via OIDC
+      uses: azure/login@v1
+      with:
+        client-id: "721121da-9956-4f2d-a308-055b22ee07e0"
+        tenant-id: "8a67a398-d847-467d-8784-862a887f1386"
+        subscription-id: "1c190342-9d6f-48cb-b208-86ca9725c9a6"
+
+    - name: Bicep Lint
+      uses: Azure/cli@v1
+      with:
+        inlineScript: |
+          cd ${{ github.workspace }}/infrastructure/module-based/modules
+          az bicep build --file main.bicep
+
+    - name: Bicep Validate
+      uses: Azure/cli@v1
+      with:
+        inlineScript: |
+          cd ${{ github.workspace }}/infrastructure/module-based
+          az deployment sub validate \
+            --name validate-${{ github.run_id }} \
+            --template-file ./modules/main.bicep \
+            --parameters ./environments/dev.parameters.json \
+            --location 'West Europe' 
+
+  what-if:
+    name: 'What-If'
+    needs: [validate]
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3.3.0
+
+    - name: Az CLI Login via OIDC
+      uses: azure/login@v1
+      with:
+        client-id: "721121da-9956-4f2d-a308-055b22ee07e0"
+        tenant-id: "8a67a398-d847-467d-8784-862a887f1386"
+        subscription-id: "1c190342-9d6f-48cb-b208-86ca9725c9a6"
+
+    - name: "What-If"
+      uses: Azure/cli@v1
+      with:
+        inlineScript: |
+          cd ${{ github.workspace }}/infrastructure/module-based
+          az deployment sub what-if \
+            --name whatif-${{ github.run_id }} \
+            --template-file ./modules/main.bicep \
+            --parameters ./environments/dev.parameters.json \
+            --location 'West Europe' > whatif
+
+    - name: PrePare Output
+      id: whatif-output
+      run: |
+        cd ${{ github.workspace }}/infrastructure/module-based
+        WHATIF=$(cat whatif)
+        delimiter="$(openssl rand -hex 8)"
+        echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+        echo "## Whatif Output" >> $GITHUB_OUTPUT
+        echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo '```' >> $GITHUB_OUTPUT
+        echo "$WHATIF" >> $GITHUB_OUTPUT
+        echo '```' >> $GITHUB_OUTPUT
+        echo "</details>" >> $GITHUB_OUTPUT
+        echo "${delimiter}" >> $GITHUB_OUTPUT
+
+    - name: Post to the Step Summary
+      env:
+        SUMMARY_OUTPUT: ${{ steps.whatif-output.outputs.summary }}
+      run: |
+        echo "$SUMMARY_OUTPUT" >> $GITHUB_STEP_SUMMARY
+
+    - name: Update PR Comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      env:
+        SUMMARY_OUTPUT: "${{ steps.whatif-output.outputs.summary }}"
+      with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = `${process.env.SUMMARY_OUTPUT}`;
+            github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+            })
+
+  deploy:
+    name: 'Deploy Infra'
+    if: github.ref == 'refs/heads/main' 
+    runs-on: ubuntu-latest
+    environment: dev
+    needs: [what-if]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Az CLI Login via OIDC
+      uses: azure/login@v1
+      with:
+        client-id: "721121da-9956-4f2d-a308-055b22ee07e0"
+        tenant-id: "8a67a398-d847-467d-8784-862a887f1386"
+        subscription-id: "1c190342-9d6f-48cb-b208-86ca9725c9a6"
+
+    - name: "Infra Deployment"
+      uses: Azure/cli@v1
+      with:
+        inlineScript: |
+          cd ${{ github.workspace }}/infrastructure/module-based
+          az deployment sub create \
+            --name validate-${{ github.run_id }} \
+            --template-file ./modules/main.bicep \
+            --parameters ./environments/dev.parameters.json \
+            --location 'West Europe' 

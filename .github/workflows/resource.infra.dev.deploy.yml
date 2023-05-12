@@ -1,4 +1,4 @@
-name: 'Deploy Infra in Dev'
+name: 'Deploy Infra in Dev [Resource Based]'
 
 on:
   workflow_dispatch:
@@ -28,14 +28,14 @@ jobs:
       uses: Azure/cli@v1
       with:
         inlineScript: |
-          cd ${{ github.workspace }}/infrastructure/modules
+          cd ${{ github.workspace }}/infrastructure/resource-based/modules
           az bicep build --file main.bicep
 
     - name: Bicep Validate
       uses: Azure/cli@v1
       with:
         inlineScript: |
-          cd ${{ github.workspace }}/infrastructure
+          cd ${{ github.workspace }}/infrastructure/resource-based
           az deployment sub validate \
             --name validate-${{ github.run_id }} \
             --template-file ./modules/main.bicep \
@@ -66,7 +66,7 @@ jobs:
       uses: Azure/cli@v1
       with:
         inlineScript: |
-          cd ${{ github.workspace }}/infrastructure
+          cd ${{ github.workspace }}/infrastructure/resource-based
           az deployment sub what-if \
             --name whatif-${{ github.run_id }} \
             --template-file ./modules/main.bicep \
@@ -76,7 +76,7 @@ jobs:
     - name: PrePare Output
       id: whatif-output
       run: |
-        cd ${{ github.workspace }}/infrastructure
+        cd ${{ github.workspace }}/infrastructure/resource-based
         WHATIF=$(cat whatif)
         delimiter="$(openssl rand -hex 8)"
         echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
@@ -111,7 +111,7 @@ jobs:
                 body: body
             })
 
-  bicep-deploy:
+  deploy:
     name: 'Deploy Infra'
     if: github.ref == 'refs/heads/main' 
     runs-on: ubuntu-latest
@@ -135,7 +135,7 @@ jobs:
       uses: Azure/cli@v1
       with:
         inlineScript: |
-          cd ${{ github.workspace }}/infrastructure
+          cd ${{ github.workspace }}/infrastructure/resource-based
           az deployment sub create \
             --name validate-${{ github.run_id }} \
             --template-file ./modules/main.bicep \

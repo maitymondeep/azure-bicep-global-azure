@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "appServicePlanName": {
+        "value": "asp-global-azure-demo-test-res"
+      },
+      "appServicePlanSku": {
+        "value": "F1"
+      },
+      "appServiceName": {
+        "value": "app-global-azure-demo-test-res"
+      },
+      "appInsightsNameWebApp": {
+        "value": "appi-app-global-azure-demo-test-res"
+      },
+      "appServicePlanCapacity": {
+        "value": 1
+      }
+    }
+  }
