@@ -38,7 +38,7 @@ jobs:
           cd ${{ github.workspace }}/infrastructure
           az deployment sub validate \
             --name validate-${{ github.run_id }} \
-            --template-file main.bicep \
+            --template-file ./modules/main.bicep \
             --parameters ./environments/dev.parameters.json \
             --location 'West Europe' 
 
